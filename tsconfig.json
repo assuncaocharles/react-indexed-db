@@ -1,27 +1,24 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"stripInternal": true,
-		"strictNullChecks": false,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"noImplicitAny": true,
-		"outDir": "./lib",
-		"allowUnreachableCode": true,
-		"declaration": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"typeRoots": ["node_modules/@types"],
-		"jsx": "react",
-		"lib": ["es2017", "dom"]
-	},
-	"include": [
-		"./src/**/*.ts"
-	],
-	"exclude": [
-		"./node_modules/"
-	]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "stripInternal": true,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "outDir": "./lib",
+    "allowUnreachableCode": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "typeRoots": ["node_modules/@types"],
+    "jsx": "react",
+    "lib": ["es2017", "dom"],
+    "esModuleInterop": true
+  },
+  "include": ["./src/**/*.ts", "src/indexed-context.tsx", "src/react-indexed-db.tsx", "src/index.tsx"],
+  "exclude": ["./node_modules/"]
 }
