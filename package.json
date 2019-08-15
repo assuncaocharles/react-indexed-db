@@ -1,0 +1,44 @@
+{
+	"name": "react-indexed-db",
+	"version": "0.0.2",
+	"description": "React wrapper to IndexedDB database.",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"files": [
+		"lib/",
+		"src/"
+	],
+	"scripts": {
+		"prepare": "npm run build",
+		"test": "karma start ./karma.conf.js",
+		"typedoc": "typedoc --out ./docs --mode modules --tsconfig ./tsconfig.json ./src/",
+		"build": "tsc"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/assuncaocharles/javascript_DataStructure.git"
+	},
+	"author": "Charles Assunção",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/assuncaocharles/javascript_DataStructure/issues"
+	},
+	"keywords": [
+		"indexed",
+		"db",
+		"indexeddb",
+		"react",
+		"reactjs",
+		"database",
+		"storage"
+	],
+	"homepage": "https://github.com/assuncaocharles/react-indexed-db",
+	"dependencies": {},
+	"devDependencies": {
+		"awesome-typescript-loader": "^5.2.1",
+		"typedoc": "^0.12.0",
+		"typescript": "^3.1.6",
+		"codelyzer": "~4.2.1",
+		"tslint": "~5.9.1"
+	}
+}
