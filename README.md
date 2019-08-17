@@ -11,7 +11,7 @@ npm install react-indexed-db
 
 ## Demo
 
-https://codesandbox.io/s/react-indexed-db-dmmci
+https://github.com/assuncaocharles/react-indexed-db/tree/master/demos
 
 ## Usage
 
