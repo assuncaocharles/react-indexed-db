@@ -279,6 +279,13 @@ Usage example:
 </AccessDB>
 ```
 
+## TODO
+
+- [ ] Improve this documentation
+- [ ] Implement Hooks `const {getAll, add ...} = useIndexedDB({name, version, dbSchema?})`
+- [ ] Handle `getAll()` perfomance issue regarding re-render
+- [ ] Improve examples
+
 ## License
 
 Released under the terms of the [MIT License](LICENSE).
