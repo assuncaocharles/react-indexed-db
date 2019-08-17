@@ -32,7 +32,7 @@ export function openDatabase(dbName: string, version: number, upgradeCallback?: 
   });
 }
 
-export function DBOperations(dbName: string, version: number, currentStore?: string) {
+export function DBOperations(dbName: string, version: number, currentStore: string) {
   return {
     add<T>(value: T, key?: any) {
       return new Promise<number>((resolve, reject) => {
@@ -56,68 +56,38 @@ export function DBOperations(dbName: string, version: number, currentStore?: str
             request: IDBRequest;
           request = objectStore.get(+id);
           request.onsuccess = function(event: Event) {
-            console.log('BY KEY', event);
-            console.log('BY KEY', request);
             resolve((event.target as any).result as T);
           };
         });
       });
     },
-    getAll<T>(keyRange?: IDBKeyRange, indexDetails?: IndexDetails) {
+    getAll<T>() {
       return new Promise<T[]>((resolve, reject) => {
         openDatabase(dbName, version).then(db => {
           validateBeforeTransaction(db, currentStore, reject);
           let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, reject, resolve)),
             objectStore = transaction.objectStore(currentStore),
-            result: Array<any> = [],
-            request: IDBRequest;
-          if (indexDetails) {
-            let index = objectStore.index(indexDetails.indexName),
-              order = indexDetails.order === 'desc' ? 'prev' : 'next';
-            request = index.openCursor(keyRange, <IDBCursorDirection>order);
-          } else {
-            request = objectStore.openCursor(keyRange);
-          }
+            result: Array<any> = [];
+
+          const request: IDBRequest = objectStore.getAll();
+
           request.onerror = function(e) {
             reject(e);
           };
-          request.onsuccess = function*(evt: Event) {
-            let cursor: IDBCursorWithValue = (<IDBRequest>evt.target).result;
-            if (cursor) {
-              result.push(cursor.value);
-              cursor.continue();
-            } else {
-              yield result;
-              resolve(result);
-            }
+
+          request.onsuccess = function({ target: { result } }: any) {
+            resolve(result as T[]);
           };
         });
       });
     },
-    getAllSync<T>(cb: any) {
-      openDatabase(dbName, version).then(db => {
-        validateBeforeTransaction(db, currentStore, () => {});
-        let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, () => {}, () => {})),
-          objectStore = transaction.objectStore(currentStore),
-          result: Array<any> = [],
-          request: IDBRequest;
-        request = objectStore.getAll();
-        request.onerror = function(e) {
-          cb(e);
-        };
-        request.onsuccess = function(evt: Event) {
-          cb(result);
-        };
-      });
-    },
-    update<T>(key: any, value: T) {
+    update<T>(value: T, key?: any) {
       return new Promise<any>((resolve, reject) => {
         openDatabase(dbName, version).then(db => {
           validateBeforeTransaction(db, currentStore, reject);
           let transaction = createTransaction(db, optionsGenerator(DBMode.readwrite, currentStore, reject, resolve)),
             objectStore = transaction.objectStore(currentStore);
           transaction.oncomplete = event => {
-            console.log('SUCCESS UPDATE: ', event);
             resolve(event);
           };
           objectStore.put(value, key);
@@ -145,7 +115,6 @@ export function DBOperations(dbName: string, version: number, currentStore?: str
             objectStore = transaction.objectStore(currentStore);
           objectStore.clear();
           transaction.oncomplete = event => {
-            console.log('Clear: ', event);
             resolve();
           };
         });
@@ -175,7 +144,6 @@ export function DBOperations(dbName: string, version: number, currentStore?: str
             index = objectStore.index(indexName),
             request = index.get(key);
           request.onsuccess = (event: Event) => {
-            console.log('GET BY INDEX: ', (<IDBOpenDBRequest>event.target).result);
             resolve((<IDBOpenDBRequest>event.target).result);
           };
         });
