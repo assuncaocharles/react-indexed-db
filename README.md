@@ -23,8 +23,20 @@ import PanelExample from './Panel';
 
 const App: React.FC = () => {
   return (
-    <IndexedDB name="MyDB" version={1}>
-      <PanelExample />
+    <IndexedDB
+      name="MyDB"
+      version={1}
+      objectStoresMeta={[
+        {
+          store: 'people',
+          storeConfig: { keyPath: 'id', autoIncrement: true },
+          storeSchema: [
+            { name: 'name', keypath: 'name', options: { unique: false } },
+            { name: 'email', keypath: 'email', options: { unique: false } }
+          ]
+        }
+      ]}>
+      <Panel />
     </IndexedDB>
   );
 };
@@ -37,7 +49,7 @@ import { AccessDB } from 'react-indexed-db';
 
 export default function PanelExample() {
   return (
-    <AccessDB>
+    <AccessDB objectStore="people">
       {db => {
         console.log('MyDB: ', db);
         return <div>{JSON.stringify(db)}</div>;
@@ -53,26 +65,6 @@ If you forget the version you the service will default to version 1.
 Use the APIs that the ReactIndexedDB service exposes to use indexeddb.
 In the API the following functions:
 
-- openDatabase(version, createCallback): opens the database for usage and update it's objectStore/s.
-  The first parameter is the version to upgrade the database and the second one is an optional callback that will handle the creation of objectStores for that version if needed.
-  **openDatabase** returns a promise that is resolved when the database is open or updated or rejected if an error occurred.
-
-Usage example:
-
-```js
-<AccessDB>
-  {db => {
-    db.openDatabase(1, evt => {
-      let objectStore = evt.currentTarget.result.createObjectStore('people', { keyPath: 'id', autoIncrement: true });
-
-      objectStore.createIndex('name', 'name', { unique: false });
-      objectStore.createIndex('email', 'email', { unique: true });
-    });
-    return <div>...</div>;
-  }}
-</AccessDB>
-```
-
 - getByKey(storeName, key): returns the object that is stored in the objectStore by its key.
   The first parameter is the store name to query and the second one is the object's key.
   **getByKey** returns a promise that is resolved when we have the object or rejected if an error occurred.
@@ -80,10 +72,10 @@ Usage example:
 Usage example:
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ getByKey }) => {
     const [person, setPerson] = useState(null);
-    db.getByKey('people', 1).then(
+    getByKey('people', 1).then(
       personFromDB => {
         setPerson(personFromDB);
       },
@@ -105,10 +97,10 @@ Usage example:
 Usage example:
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ getAll }) => {
     const [persons, setPersons] = useState(null);
-    db.getAll('people').then(
+    getAll().then(
       peopleFromDB => {
         setPersons(peopleFromDB);
       },
@@ -128,10 +120,10 @@ Usage example:
 Usage example:
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ getByIndex }) => {
     const [person, setPerson] = useState(null);
-    db.getByIndex('people', 'name', 'Dave').then(
+    getByIndex('name', 'Dave').then(
       personFromDB => {
         setPerson(peopleFromDB);
       },
@@ -151,12 +143,12 @@ Usage example:
 Usage example (add without a key):
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ add }) => {
     return (
       <button
         onClick={() => {
-          db.add('people', { name: 'name', email: 'email' }).then(
+          add({ name: 'name', email: 'email' }).then(
             event => {
               console.log('ID Generated: ', event.target.result);
             },
@@ -181,12 +173,12 @@ In the previous example I'm using undefined as the key because the key is config
 Usage example (update without a key):
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ update }) => {
     return (
       <button
         onClick={() => {
-          db.update('people', { id: 3, name: 'name', email: 'email' }).then(
+          update('people', { id: 3, name: 'name', email: 'email' }).then(
             () => {
               // Do something after update
             },
@@ -209,12 +201,12 @@ Usage example (update without a key):
 Usage example:
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ deleteRecord }) => {
     return (
       <button
         onClick={() => {
-          db.delete('people', 3).then(
+          deleteRecord(3).then(
             () => {
               // Do something after delete
             },
@@ -237,24 +229,20 @@ Usage example:
 Usage example:
 
 ```js
-<AccessDB>
-  {db => {
+<AccessDB objectStore="people">
+  {({ openCursor }) => {
     return (
       <button
         onClick={() => {
-          db.openCursor(
-            'people',
-            evt => {
-              var cursor = evt.target.result;
-              if (cursor) {
-                console.log(cursor.value);
-                cursor.continue();
-              } else {
-                console.log('Entries all displayed.');
-              }
-            },
-            IDBKeyRange.bound('A', 'F')
-          );
+          openCursor(evt => {
+            var cursor = evt.target.result;
+            if (cursor) {
+              console.log(cursor.value);
+              cursor.continue();
+            } else {
+              console.log('Entries all displayed.');
+            }
+          }, IDBKeyRange.bound('A', 'F'));
         }}>
         Run cursor
       </button>
@@ -271,11 +259,11 @@ Usage example:
 
 ```js
 <AccessDB>
-  {db => {
+  {({ db }) => {
     return (
       <button
         onClick={() => {
-          db.clear('people').then(
+          clear('people').then(
             () => {
               // Do something after clear
             },
