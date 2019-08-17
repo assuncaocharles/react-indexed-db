@@ -43,15 +43,13 @@ export function IndexedDB({ name, version, children, objectStoresMeta }: Indexed
 
 interface AccessDBProps {
   children: ({
-    db,
-    add
+    db
   }: {
     db: IDBDatabase;
     add: <T = any>(value: T, key?: any) => Promise<number>;
     getByID: <T = any>(id: number | string) => Promise<T>;
     getAll: <T = any>() => Promise<T[]>;
-    getAllSync: <T = any>(args: any) => void;
-    update: <T = any>(key: any, value: T) => Promise<any>;
+    update: <T = any>(value: T, key?: any) => Promise<any>;
     deleteRecord: (key: Key) => Promise<any>;
     openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
     getByIndex: (indexName: string, key: any) => Promise<any>;
