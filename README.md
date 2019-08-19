@@ -79,7 +79,7 @@ function App() {
 }
 ```
 
-## Accessing and working with th DB
+## Accessing and working with the DB
 
 - In any component inside this context or in an app using the hooks after creating the DB you can consume it like bellow:
 
