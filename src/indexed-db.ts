@@ -1,10 +1,5 @@
 import { validateBeforeTransaction, createTransaction, optionsGenerator } from './Utils';
 
-interface DBConfig {
-  dbName: string;
-  version: number;
-}
-
 export type Key = string | number | Date | ArrayBufferView | ArrayBuffer | IDBArrayKey | IDBKeyRange;
 export interface IndexDetails {
   indexName: string;

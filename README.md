@@ -9,19 +9,56 @@ It exposes very simple promises API to enable the usage of IndexedDB without mos
 npm install react-indexed-db
 ```
 
-## Demo
+## Creating the DB
 
-https://github.com/assuncaocharles/react-indexed-db/tree/master/demos
+You can choose to work with the indexed db as an context or to use it as a hook.
 
-## Usage
+### To use it as a hook
 
-Create a context with an DB:
+- Fist initialized your DB before to be able to use the hooks inside other components:
+
+```js
+//DBConfig.js|tsx
+
+export const DBConfig = {
+  name: 'MyDB',
+  version: 1,
+  objectStoresMeta: [
+    {
+      store: 'people',
+      storeConfig: { keyPath: 'id', autoIncrement: true },
+      storeSchema: [
+        { name: 'name', keypath: 'name', options: { unique: false } },
+        { name: 'email', keypath: 'email', options: { unique: false } }
+      ]
+    }
+  ]
+};
+```
+
+```js
+//App.js|tsx
+
+import React from 'react';
+import { DBConfig } from './DBConfig';
+import { initDB } from 'react-indexed-db';
+
+initDB(DBConfig);
+
+const App: React.FC = () => {
+  return <div>...</div>;
+};
+```
+
+### To use it as an context:
+
+- First you have to declare inside `<IndexedDB></IndexedDB>` all the components you want to be able access the DB:
 
 ```js
 import { IndexedDB } from 'react-indexed-db';
 import PanelExample from './Panel';
 
-const App: React.FC = () => {
+function App() {
   return (
     <IndexedDB
       name="MyDB"
@@ -39,12 +76,15 @@ const App: React.FC = () => {
       <Panel />
     </IndexedDB>
   );
-};
+}
 ```
 
-and in any component inside this context you can consume it like bellow:
+## Accessing and working with th DB
+
+- In any component inside this context or in an app using the hooks after creating the DB you can consume it like bellow:
 
 ```js
+// Context
 import { AccessDB } from 'react-indexed-db';
 
 export default function PanelExample() {
@@ -57,25 +97,32 @@ export default function PanelExample() {
     </AccessDB>
   );
 }
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+export default function PanelExample() {
+  const db = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+
+  return (<div>{JSON.stringify(db)}</div>);
+}
 ```
 
-The first argument is the name of your database and the second is the database version.
-If you forget the version you the service will default to version 1.
+#### getByID(id)
 
-Use the APIs that the ReactIndexedDB service exposes to use indexeddb.
-In the API the following functions:
-
-- getByKey(storeName, key): returns the object that is stored in the objectStore by its key.
-  The first parameter is the store name to query and the second one is the object's key.
-  **getByKey** returns a promise that is resolved when we have the object or rejected if an error occurred.
+It returns the object that is stored in the objectStore by its id.
+**getByID** returns a promise that is resolved when we have the object or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
-  {({ getByKey }) => {
+  {({ getById }) => {
     const [person, setPerson] = useState(null);
-    getByKey('people', 1).then(
+    getById('people', 1).then(
       personFromDB => {
         setPerson(personFromDB);
       },
@@ -85,18 +132,36 @@ Usage example:
     );
     return <div>{person}</div>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function ByID() {
+  const { getByID } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const [person, setPerson] = useState();
+
+  useEffect(() => {
+    getById(1).then(personFromDB => {
+      setPerson(personFromDB);
+    });
+  }, []);
+
+  return <div>{person}</div>;
+}
 ```
 
-- getAll(storeName, keyRange, indexDetails): returns an array of all the items in the given objectStore.
-  The first parameter is the store name to query.
-  The second parameter is an optional IDBKeyRange object.
-  The third parameter is an index details which must include index name and an optional order parameter.
-  **getAll** returns a promise that is resolved when we have the array of items or rejected if an error occurred.
+#### getAll()
+
+It returns an array of all the items in the given objectStore.
+**getAll** returns a promise that is resolved when we have the array of items or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ getAll }) => {
     const [persons, setPersons] = useState(null);
@@ -108,18 +173,51 @@ Usage example:
         console.log(error);
       }
     );
-    return <div>{persons}</div>;
+    return (
+      <div>
+        {personsFromDB.map(person => (
+          <span>{person}</span>
+        ))}
+      </div>
+    );
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function ShowAll() {
+  const { getAll } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const [persons, setPersons] = useState();
+
+  useEffect(() => {
+    getAll().then(personsFromDB => {
+      setPersons(personsFromDB);
+    });
+  }, []);
+
+  return (
+    <div>
+      {personsFromDB.map(person => (
+        <span>{person}</span>
+      ))}
+    </div>
+  );
+}
 ```
 
-- getByIndex(storeName, indexName, key): returns an stored item using an objectStore's index.
-  The first parameter is the store name to query, the second parameter is the index and third parameter is the item to query.
-  **getByIndex** returns a promise that is resolved when the item successfully returned or rejected if an error occurred.
+#### getByIndex(indexName, key)
+
+It returns an stored item using an objectStore's index.
+The first parameter is the index and the second is the item to query.
+**getByIndex** returns a promise that is resolved when the item successfully returned or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ getByIndex }) => {
     const [person, setPerson] = useState(null);
@@ -133,52 +231,93 @@ Usage example:
     );
     return <div>{person}</div>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function ByIndex() {
+  const { getByIndex } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const [person, setPerson] = useState();
+
+  useEffect(() => {
+    getByIndex('name', 'Dave').then(personFromDB => {
+      setPerson(peopleFromDB);
+    });
+  }, []);
+  return <div>{person}</div>;
+}
 ```
 
-- add(storeName, value, key): Adds to the given objectStore the key and value pair.
-  The first parameter is the store name to modify, the second parameter is the value and the third parameter is the key (if not auto-generated).
-  **add** returns a promise that is resolved when the value was added or rejected if an error occurred.
+#### add(value, key)
 
-Usage example (add without a key):
+It Adds to the given objectStore the key and value pair.
+The firt parameter is the value and the second is the key (if not auto-generated).
+**add** returns a promise that is resolved when the value was added or rejected if an error occurred.
+
+Usage example (add without a key since it's configured to be auto generated):
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ add }) => {
-    return (
-      <button
-        onClick={() => {
-          add({ name: 'name', email: 'email' }).then(
-            event => {
-              console.log('ID Generated: ', event.target.result);
-            },
-            error => {
-              console.log(error);
-            }
-          );
-        }}>
-        Add
-      </button>
-    );
+    const handleClick = () => {
+      add({ name: 'name', email: 'email' }).then(
+        event => {
+          console.log('ID Generated: ', event.target.result);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    };
+
+    return <button onClick={handleClick}>Add</button>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function AddMore() {
+  const { add } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const [person, setPerson] = useState();
+
+  const handleClick = () => {
+    add({ name: 'name', email: 'email' }).then(
+      event => {
+        console.log('ID Generated: ', event.target.result);
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  };
+
+  return <button onClick={handleClick}>Add</button>;
+}
 ```
 
-In the previous example I'm using undefined as the key because the key is configured in the objectStore as auto-generated.
+#### update(value, key?)
 
-- update(storeName, value, key?): Updates the given value in the objectStore.
-  The first parameter is the store name to modify, the second parameter is the value to update and the third parameter is the key (if there is no key don't provide it).
-  **update** returns a promise that is resolved when the value was updated or rejected if an error occurred.
+It updates the given value in the objectStore.
+The first parameter is the value to update and the second is the key (if there is no key don't provide it).
+**update** returns a promise that is resolved when the value was updated or rejected if an error occurred.
 
 Usage example (update without a key):
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ update }) => {
     return (
       <button
         onClick={() => {
-          update('people', { id: 3, name: 'name', email: 'email' }).then(
+          update({ id: 3, name: 'NewName', email: 'NewEmail' }).then(
             () => {
               // Do something after update
             },
@@ -191,100 +330,159 @@ Usage example (update without a key):
       </button>
     );
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function Edit() {
+  const { update } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const [person, setPerson] = useState();
+
+  const handleClick = () => {
+    update({ id: 3, name: 'NewName', email: 'NewNEmail' }).then(event => {
+      alert('Edited!');
+    });
+  };
+
+  return <button onClick={handleClick}>Update</button>;
+}
 ```
 
-- delete(storeName, key): deletes the object that correspond with the key from the objectStore.
-  The first parameter is the store name to modify and the second parameter is the key to delete.
-  **delete** returns a promise that is resolved when the value was deleted or rejected if an error occurred.
+#### delete(key)
+
+deletes the object that correspond with the key from the objectStore.
+The first parameter is the key to delete.
+**delete** returns a promise that is resolved when the value was deleted or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ deleteRecord }) => {
-    return (
-      <button
-        onClick={() => {
-          deleteRecord(3).then(
-            () => {
-              // Do something after delete
-            },
-            error => {
-              console.log(error);
-            }
-          );
-        }}>
-        Delete
-      </button>
-    );
+    const handleClick = () => {
+      deleteRecord(3).then(event => {
+        alert('Deleted!');
+      });
+    };
+    return <button onClick={handleClick}>Delete</button>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function Delete() {
+  const { deleteRecord } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+
+  const handleClick = () => {
+    deleteRecord(3).then(event => {
+      alert('Deleted!');
+    });
+  };
+
+  return <button onClick={handleClick}>Delete</button>;
+}
 ```
 
-- openCursor(storeName, cursorCallback, keyRange): opens an objectStore cursor to enable iterating on the objectStore.
-  The first parameter is the store name, the second parameter is a callback function to run when the cursor succeeds to be opened and the third parameter is optional IDBKeyRange object.
-  **openCursor** returns a promise that is resolved when the cursor finishes running or rejected if an error occurred.
+#### openCursor(cursorCallback, keyRange)
+
+It opens an objectStore cursor to enable iterating on the objectStore.
+The first parameter is a callback function to run when the cursor succeeds to be opened and the second is optional IDBKeyRange object.
+**openCursor** returns a promise that is resolved when the cursor finishes running or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB objectStore="people">
   {({ openCursor }) => {
-    return (
-      <button
-        onClick={() => {
-          openCursor(evt => {
-            var cursor = evt.target.result;
-            if (cursor) {
-              console.log(cursor.value);
-              cursor.continue();
-            } else {
-              console.log('Entries all displayed.');
-            }
-          }, IDBKeyRange.bound('A', 'F'));
-        }}>
-        Run cursor
-      </button>
-    );
+    const handleClick = () => {
+      openCursor(evt => {
+        var cursor = evt.target.result;
+        if (cursor) {
+          console.log(cursor.value);
+          cursor.continue();
+        } else {
+          console.log('Entries all displayed.');
+        }
+      }, IDBKeyRange.bound('A', 'F'));
+    };
+    return <button onClick={handleClick}>Run cursor</button>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function Open() {
+  const { openCursor } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+
+  const handleClick = () => {
+    openCursor(evt => {
+      var cursor = evt.target.result;
+      if (cursor) {
+        console.log(cursor.value);
+        cursor.continue();
+      } else {
+        console.log('Entries all displayed.');
+      }
+    }, IDBKeyRange.bound('A', 'F'));
+  };
+
+  return <button onClick={handleClick}>Run cursor</button>;
+}
 ```
 
-- clear(storeName): clears all the data in an objectStore.
-  The first parameter is the store name to clear.
-  **clear** returns a promise that is resolved when the objectStore was cleared or rejected if an error occurred.
+#### clear()
+
+It clears all the data in the objectStore.
+**clear** returns a promise that is resolved when the objectStore was cleared or rejected if an error occurred.
 
 Usage example:
 
 ```js
+// Context
+import { AccessDB } from 'react-indexed-db';
+
 <AccessDB>
-  {({ db }) => {
-    return (
-      <button
-        onClick={() => {
-          clear('people').then(
-            () => {
-              // Do something after clear
-            },
-            error => {
-              console.log(error);
-            }
-          );
-        }}>
-        Clear Table
-      </button>
-    );
+  {({ clear }) => {
+    const handleClick = () => {
+      clear().then(() => {
+        alert('All Clear!');
+      });
+    };
+    return <button onClick={handleClick}>Clear All</button>;
   }}
-</AccessDB>
+</AccessDB>;
+
+// Hooks
+import { useIndexedDB } from 'react-indexed-db';
+
+function ClearAll() {
+  const { clear } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+
+  const handleClick = () => {
+    clear().then(() => {
+      alert('All Clear!');
+    });
+  };
+
+  return <button onClick={handleClick}>Clear All</button>;
+}
 ```
 
 ## TODO
 
 - [ ] Improve this documentation
-- [ ] Implement Hooks `const {getAll, add ...} = useIndexedDB({name, version, dbSchema?})`
+- [x] Implement Hooks `const {getAll, add ...} = useIndexedDB({name, version, dbSchema?})`
 - [ ] Handle `getAll()` perfomance issue regarding re-render
-- [ ] Improve examples
+- [ ] Implement examples/Demos
 
 ## License
 
