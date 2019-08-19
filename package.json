@@ -1,6 +1,6 @@
 {
   "name": "react-indexed-db",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React wrapper to IndexedDB database.",
   "main": "lib/main.js",
   "types": "lib/index.d.ts",
