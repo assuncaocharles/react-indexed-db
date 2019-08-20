@@ -26,6 +26,8 @@
     "indexed",
     "db",
     "indexeddb",
+    "indexed-db",
+    "database",
     "react",
     "reactjs",
     "database",

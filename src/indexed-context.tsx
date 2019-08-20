@@ -25,8 +25,10 @@ const IndexedDBContext = React.createContext<{ db: any; name: string; version: n
   name: null,
   version: null
 });
+
 const IndexedDBProvider = IndexedDBContext.Provider;
 const IndexedDBCosumer = IndexedDBContext.Consumer;
+
 export function IndexedDB({ name, version, children, objectStoresMeta }: IndexedDBProps) {
   objectStoresMeta.forEach(async (schema: ObjectStoreMeta) => {
     const db = await openDatabase(name, version, (event: any) => {
