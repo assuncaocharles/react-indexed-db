@@ -26,6 +26,7 @@
     "indexed",
     "db",
     "indexeddb",
+    "websql",
     "indexed-db",
     "database",
     "react",
