@@ -102,7 +102,7 @@ export default function PanelExample() {
 import { useIndexedDB } from 'react-indexed-db';
 
 export default function PanelExample() {
-  const db = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const db = useIndexedDB('people');
 
   return (<div>{JSON.stringify(db)}</div>);
 }
@@ -138,7 +138,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function ByID() {
-  const { getByID } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { getByID } = useIndexedDB('people');
   const [person, setPerson] = useState();
 
   useEffect(() => {
@@ -187,7 +187,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function ShowAll() {
-  const { getAll } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { getAll } = useIndexedDB('people');
   const [persons, setPersons] = useState();
 
   useEffect(() => {
@@ -237,7 +237,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function ByIndex() {
-  const { getByIndex } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { getByIndex } = useIndexedDB('people');
   const [person, setPerson] = useState();
 
   useEffect(() => {
@@ -282,7 +282,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function AddMore() {
-  const { add } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { add } = useIndexedDB('people');
   const [person, setPerson] = useState();
 
   const handleClick = () => {
@@ -336,7 +336,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function Edit() {
-  const { update } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { update } = useIndexedDB('people');
   const [person, setPerson] = useState();
 
   const handleClick = () => {
@@ -376,7 +376,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function Delete() {
-  const { deleteRecord } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { deleteRecord } = useIndexedDB('people');
 
   const handleClick = () => {
     deleteRecord(3).then(event => {
@@ -421,7 +421,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function Open() {
-  const { openCursor } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { openCursor } = useIndexedDB('people');
 
   const handleClick = () => {
     openCursor(evt => {
@@ -465,7 +465,7 @@ import { AccessDB } from 'react-indexed-db';
 import { useIndexedDB } from 'react-indexed-db';
 
 function ClearAll() {
-  const { clear } = useIndexedDB(DBConfig.name, DBConfig.version, 'people');
+  const { clear } = useIndexedDB('people');
 
   const handleClick = () => {
     clear().then(() => {

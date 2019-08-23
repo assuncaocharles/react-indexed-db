@@ -24,7 +24,12 @@ export interface useIndexedDB {
   objectStore: string;
 }
 
+let indexeddbConfiguration: { version: number; name: string } = { version: null, name: null };
+
 export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
+  indexeddbConfiguration.name = name;
+  indexeddbConfiguration.version = version;
+  Object.freeze(indexeddbConfiguration);
   objectStoresMeta.forEach(async (schema: ObjectStoreMeta) => {
     const db = await openDatabase(name, version, (event: any) => {
       let db: IDBDatabase = event.currentTarget.result;
@@ -37,8 +42,6 @@ export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
 }
 
 export function useIndexedDB(
-  dbName: string,
-  version: number,
   objectStore: string
 ): {
   add: <T = any>(value: T, key?: any) => Promise<number>;
@@ -49,5 +52,8 @@ export function useIndexedDB(
   openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
   getByIndex: (indexName: string, key: any) => Promise<any>;
 } {
-  return { ...DBOperations(dbName, version, objectStore) };
+  if (!indexeddbConfiguration.name || !indexeddbConfiguration.version) {
+    throw new Error('Please, initialize the DB before the use.');
+  }
+  return { ...DBOperations(indexeddbConfiguration.name, indexeddbConfiguration.version, objectStore) };
 }
