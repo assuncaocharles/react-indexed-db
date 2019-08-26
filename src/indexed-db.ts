@@ -1,4 +1,5 @@
 import { validateBeforeTransaction, createTransaction, optionsGenerator } from './Utils';
+import { ObjectStoreMeta, ObjectStoreSchema } from './indexed-hooks';
 
 export type Key = string | number | Date | ArrayBufferView | ArrayBuffer | IDBArrayKey | IDBKeyRange;
 export interface IndexDetails {
@@ -21,10 +22,31 @@ export function openDatabase(dbName: string, version: number, upgradeCallback?: 
     };
     if (typeof upgradeCallback === 'function') {
       request.onupgradeneeded = (event: Event) => {
+        console.log('checkout');
         upgradeCallback(event, db);
       };
     }
   });
+}
+
+export function CreateObjectStore(dbName: string, version: number, storeSchemas: ObjectStoreMeta[]) {
+  const request: IDBOpenDBRequest = indexedDB.open(dbName, version);
+
+  request.onupgradeneeded = function(event: IDBVersionChangeEvent) {
+    const database: IDBDatabase = (event.target as any).result;
+    storeSchemas.forEach((storeSchema: ObjectStoreMeta) => {
+      if (!database.objectStoreNames.contains(storeSchema.store)) {
+        const objectStore = database.createObjectStore(storeSchema.store, storeSchema.storeConfig);
+        storeSchema.storeSchema.forEach((schema: ObjectStoreSchema) => {
+          objectStore.createIndex(schema.name, schema.keypath, schema.options);
+        });
+      }
+    });
+    database.close();
+  };
+  request.onsuccess = function(e: any) {
+    e.target.result.close();
+  };
 }
 
 export function DBOperations(dbName: string, version: number, currentStore: string) {

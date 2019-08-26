@@ -1,4 +1,4 @@
-import { DBOperations, openDatabase, Key } from './indexed-db';
+import { DBOperations, openDatabase, Key, CreateObjectStore } from './indexed-db';
 
 export interface IndexedDBProps {
   name: string;
@@ -30,15 +30,7 @@ export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
   indexeddbConfiguration.name = name;
   indexeddbConfiguration.version = version;
   Object.freeze(indexeddbConfiguration);
-  objectStoresMeta.forEach(async (schema: ObjectStoreMeta) => {
-    const db = await openDatabase(name, version, (event: any) => {
-      let db: IDBDatabase = event.currentTarget.result;
-      let objectStore = db.createObjectStore(schema.store, schema.storeConfig);
-      schema.storeSchema.forEach((schema: ObjectStoreSchema) => {
-        objectStore.createIndex(schema.name, schema.keypath, schema.options);
-      });
-    });
-  });
+  CreateObjectStore(name, version, objectStoresMeta);
 }
 
 export function useIndexedDB(
