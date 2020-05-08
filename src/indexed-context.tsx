@@ -54,6 +54,7 @@ interface AccessDBProps {
     deleteRecord: (key: Key) => Promise<any>;
     openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
     getByIndex: (indexName: string, key: any) => Promise<any>;
+    clear: () => Promise<any>;
   }) => {};
   objectStore: string;
 }
