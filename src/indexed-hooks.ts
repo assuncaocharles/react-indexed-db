@@ -43,6 +43,7 @@ export function useIndexedDB(
   deleteRecord: (key: Key) => Promise<any>;
   openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
   getByIndex: (indexName: string, key: any) => Promise<any>;
+  clear: () => Promise<any>;
 } {
   if (!indexeddbConfiguration.name || !indexeddbConfiguration.version) {
     throw new Error('Please, initialize the DB before the use.');
