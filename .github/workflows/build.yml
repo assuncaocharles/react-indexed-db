@@ -19,6 +19,6 @@ jobs:
 
     - name: Run a multi-line script
       run: |
-        npm run install,
+        npm install,
         npm run test,
         npm run build.
