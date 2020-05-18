@@ -17,8 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run a multi-line script
-      run: |
-        npm install,
-        npm run test,
-        npm run build.
+    - name: install deps
+      run: npm install
+    - name: tests
+      run: npm test
+    - name: build
+      run: npm build
