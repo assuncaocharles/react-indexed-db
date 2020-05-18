@@ -22,7 +22,6 @@ export function openDatabase(dbName: string, version: number, upgradeCallback?: 
     };
     if (typeof upgradeCallback === 'function') {
       request.onupgradeneeded = (event: Event) => {
-        console.log('checkout');
         upgradeCallback(event, db);
       };
     }

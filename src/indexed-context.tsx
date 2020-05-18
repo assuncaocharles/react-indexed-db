@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { DBOperations, openDatabase, Key } from './indexed-db';
 
 interface IndexedDBProps {
