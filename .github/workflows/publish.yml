@@ -6,9 +6,6 @@ on:
   push:
     branches:
     - release/*
-  pull_request:
-    branches:
-    - release/*
 
 jobs:
   publish:
@@ -19,7 +16,6 @@ jobs:
         with:
           node-version: 12
       - run: npm install
-      - run: npm test
       - run: npm run build
       - uses: JS-DevTools/npm-publish@v1
         with:
