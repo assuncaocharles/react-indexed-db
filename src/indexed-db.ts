@@ -1,5 +1,8 @@
-import { validateBeforeTransaction, createTransaction, optionsGenerator } from './Utils';
+import { useCallback } from 'react';
+import { validateBeforeTransaction } from './Utils';
 import { ObjectStoreMeta, ObjectStoreSchema } from './indexed-hooks';
+import { createReadwriteTransaction } from './createReadwriteTransaction';
+import { createReadonlyTransaction } from './createReadonlyTransaction';
 
 export type Key = string | number | Date | ArrayBufferView | ArrayBuffer | IDBArrayKey | IDBKeyRange;
 export interface IndexDetails {
@@ -49,100 +52,46 @@ export function CreateObjectStore(dbName: string, version: number, storeSchemas:
 }
 
 export function DBOperations(dbName: string, version: number, currentStore: string) {
-  return {
-    add<T>(value: T, key?: any) {
-      return new Promise<number>((resolve, reject) => {
-        openDatabase(dbName, version).then((db: IDBDatabase) => {
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readwrite, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore);
-          let request = objectStore.add(value, key);
-          request.onsuccess = (evt: any) => {
-            key = evt.target.result;
-            resolve(key);
-          };
-        });
-      });
-    },
-    getByID<T>(id: string | number) {
-      return new Promise<T>((resolve, reject) => {
-        openDatabase(dbName, version).then((db: IDBDatabase) => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore),
-            request: IDBRequest;
-          request = objectStore.get(+id);
-          request.onsuccess = function(event: Event) {
-            resolve((event.target as any).result as T);
-          };
-        });
-      });
-    },
-    getAll<T>() {
-      return new Promise<T[]>((resolve, reject) => {
-        openDatabase(dbName, version).then(db => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore),
-            result: Array<any> = [];
+  // Readonly operations
+  const getAll = useCallback(
+    <T>() => new Promise<T[]>((resolve, reject) => {
+      openDatabase(dbName, version).then(db => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const { store } = createReadonlyTransaction(db, currentStore, resolve, reject);
+        const request = store.getAll();
 
-          const request: IDBRequest = objectStore.getAll();
+        request.onerror = error => reject(error);
 
-          request.onerror = function(e) {
-            reject(e);
-          };
+        request.onsuccess = function({ target: { result } }: any) {
+          resolve(result as T[]);
+        };
+      });
+    }),
+    [dbName, version, currentStore]
+  );
 
-          request.onsuccess = function({ target: { result } }: any) {
-            resolve(result as T[]);
-          };
-        });
+  const getByID = useCallback(
+    <T>(id: string | number) => new Promise<T>((resolve, reject) => {
+      openDatabase(dbName, version).then((db: IDBDatabase) => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const { store } = createReadonlyTransaction(db, currentStore, resolve, reject);
+        const request = store.get(+id);
+
+        request.onsuccess = function(event: Event) {
+          resolve((event.target as any).result as T);
+        };
       });
-    },
-    update<T>(value: T, key?: any) {
-      return new Promise<any>((resolve, reject) => {
-        openDatabase(dbName, version).then(db => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readwrite, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore);
-          transaction.oncomplete = event => {
-            resolve(event);
-          };
-          objectStore.put(value, key);
-        });
-      });
-    },
-    deleteRecord(key: Key) {
-      return new Promise<any>((resolve, reject) => {
-        openDatabase(dbName, version).then(db => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readwrite, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore);
-          let request = objectStore.delete(key);
-          request.onsuccess = event => {
-            resolve(event);
-          };
-        });
-      });
-    },
-    clear() {
-      return new Promise<any>((resolve, reject) => {
-        openDatabase(dbName, version).then(db => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readwrite, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore);
-          objectStore.clear();
-          transaction.oncomplete = event => {
-            resolve();
-          };
-        });
-      });
-    },
-    openCursor(cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) {
+    }),
+    [dbName, version, currentStore],
+  );
+
+  const openCursor = useCallback(
+    (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => {
       return new Promise<void>((resolve, reject) => {
         openDatabase(dbName, version).then(db => {
           validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore),
-            request = objectStore.openCursor(keyRange);
+          const { store } = createReadonlyTransaction(db, currentStore, resolve, reject);
+          const request = store.openCursor(keyRange);
 
           request.onsuccess = (event: Event) => {
             cursorCallback(event);
@@ -151,20 +100,96 @@ export function DBOperations(dbName: string, version: number, currentStore: stri
         });
       });
     },
-    getByIndex(indexName: string, key: any) {
-      return new Promise<any>((resolve, reject) => {
-        openDatabase(dbName, version).then(db => {
-          validateBeforeTransaction(db, currentStore, reject);
-          let transaction = createTransaction(db, optionsGenerator(DBMode.readonly, currentStore, reject, resolve)),
-            objectStore = transaction.objectStore(currentStore),
-            index = objectStore.index(indexName),
-            request = index.get(key);
-          request.onsuccess = (event: Event) => {
-            resolve((<IDBOpenDBRequest>event.target).result);
-          };
-        });
+    [dbName, version, currentStore],
+  );
+
+  const getByIndex = useCallback(
+    (indexName: string, key: any) => new Promise<any>((resolve, reject) => {
+      openDatabase(dbName, version).then(db => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const { store } = createReadonlyTransaction(db, currentStore, resolve, reject);
+        const index = store.index(indexName);
+        const request = index.get(key);
+
+        request.onsuccess = (event: Event) => {
+          resolve((<IDBOpenDBRequest>event.target).result);
+        };
       });
-    }
+    }),
+    [dbName, version, currentStore],
+  );
+
+  // Readwrite operations
+  const add = useCallback(
+    <T>(value: T, key?: any) => new Promise<number>((resolve, reject) => {
+      openDatabase(dbName, version).then((db: IDBDatabase) => {
+        const { store } = createReadwriteTransaction(db, currentStore, resolve, reject);
+        const request = store.add(value, key);
+
+        request.onsuccess = (evt: any) => {
+          key = evt.target.result;
+          resolve(key);
+        };
+
+        request.onerror = error => reject(error);
+      });
+    }),
+    [dbName, version, currentStore],
+  );
+
+  const update = useCallback(
+    <T>(value: T, key?: any) => new Promise<any>((resolve, reject) => {
+      openDatabase(dbName, version).then(db => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const {
+          transaction,
+          store,
+        } = createReadwriteTransaction(db, currentStore, resolve, reject);
+
+        transaction.oncomplete = event => resolve(event);
+
+        store.put(value, key);
+      });
+    }),
+    [dbName, version, currentStore],
+  );
+
+  const deleteRecord = useCallback(
+    (key: Key) =>  new Promise<any>((resolve, reject) => {
+      openDatabase(dbName, version).then(db => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const { store } = createReadwriteTransaction(db, currentStore, resolve, reject);
+        const request = store.delete(key);
+
+        request.onsuccess = event => resolve(event);
+      });
+    }),
+    [dbName, version, currentStore],
+  );
+
+  const clear = useCallback(
+    () => new Promise<any>((resolve, reject) => {
+      openDatabase(dbName, version).then(db => {
+        validateBeforeTransaction(db, currentStore, reject);
+        const { store, transaction } = createReadwriteTransaction(db, currentStore, resolve, reject);
+
+        transaction.oncomplete = () => resolve();
+
+        store.clear();
+      });
+    }),
+    [dbName, version, currentStore],
+  );
+
+  return {
+    add,
+    getByID,
+    getAll,
+    update,
+    deleteRecord,
+    clear,
+    openCursor,
+    getByIndex,
   };
 }
 
