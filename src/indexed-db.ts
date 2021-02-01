@@ -75,7 +75,7 @@ export function DBOperations(dbName: string, version: number, currentStore: stri
       openDatabase(dbName, version).then((db: IDBDatabase) => {
         validateBeforeTransaction(db, currentStore, reject);
         const { store } = createReadonlyTransaction(db, currentStore, resolve, reject);
-        const request = store.get(+id);
+        const request = store.get(id);
 
         request.onsuccess = function(event: Event) {
           resolve((event.target as any).result as T);
