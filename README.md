@@ -15,7 +15,7 @@ You can choose to work with the indexed db as an context or to use it as a hook.
 
 ### To use it as a hook
 
-- Fist initialized your DB before to be able to use the hooks inside other components:
+- First initialize your DB before to be able to use the hooks inside other components:
 
 ```js
 //DBConfig.js|tsx
@@ -252,7 +252,7 @@ function ByIndex() {
 #### add(value, key)
 
 It Adds to the given objectStore the key and value pair.
-The firt parameter is the value and the second is the key (if not auto-generated).
+The first parameter is the value and the second is the key (if not auto-generated).
 **add** returns a promise that is resolved when the value was added or rejected if an error occurred.
 
 Usage example (add without a key since it's configured to be auto generated):
@@ -481,7 +481,7 @@ function ClearAll() {
 
 - [ ] Improve this documentation
 - [x] Implement Hooks `const {getAll, add ...} = useIndexedDB({name, version, dbSchema?})`
-- [ ] Handle `getAll()` perfomance issue regarding re-render
+- [ ] Handle `getAll()` performance issue regarding re-render
 - [ ] Implement examples/Demos
 
 ## License
