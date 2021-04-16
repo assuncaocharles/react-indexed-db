@@ -122,7 +122,7 @@ import { AccessDB } from 'react-indexed-db';
 <AccessDB objectStore="people">
   {({ getById }) => {
     const [person, setPerson] = useState(null);
-    getById('people', 1).then(
+    getByID('people', 1).then(
       personFromDB => {
         setPerson(personFromDB);
       },
