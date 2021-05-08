@@ -265,8 +265,8 @@ import { AccessDB } from 'react-indexed-db';
   {({ add }) => {
     const handleClick = () => {
       add({ name: 'name', email: 'email' }).then(
-        event => {
-          console.log('ID Generated: ', event.target.result);
+        id => {
+          console.log('ID Generated: ', id);
         },
         error => {
           console.log(error);
@@ -287,8 +287,8 @@ function AddMore() {
 
   const handleClick = () => {
     add({ name: 'name', email: 'email' }).then(
-      event => {
-        console.log('ID Generated: ', event.target.result);
+      id => {
+        console.log('ID Generated: ', id);
       },
       error => {
         console.log(error);
