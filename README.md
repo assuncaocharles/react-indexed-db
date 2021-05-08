@@ -120,9 +120,9 @@ Usage example:
 import { AccessDB } from 'react-indexed-db';
 
 <AccessDB objectStore="people">
-  {({ getById }) => {
+  {({ getByID }) => {
     const [person, setPerson] = useState(null);
-    getById('people', 1).then(
+    getByID('people', 1).then(
       personFromDB => {
         setPerson(personFromDB);
       },
@@ -142,7 +142,7 @@ function ByID() {
   const [person, setPerson] = useState();
 
   useEffect(() => {
-    getById(1).then(personFromDB => {
+    getByID(1).then(personFromDB => {
       setPerson(personFromDB);
     });
   }, []);
