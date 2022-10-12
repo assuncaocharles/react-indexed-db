@@ -4,8 +4,8 @@ import { createDatabaseTransaction } from './createDatabaseTransaction';
 export function createReadwriteTransaction(
   database: IDBDatabase,
   store: string,
-  resolve: Function,
-  reject: Function
+  resolve: (e?: any) => void,
+  reject: (e: Event) => void
 ) {
   return createDatabaseTransaction(
     database,

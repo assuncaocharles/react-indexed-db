@@ -4,7 +4,7 @@ import { ObjectStoreMeta, ObjectStoreSchema } from './indexed-hooks';
 import { createReadwriteTransaction } from './createReadwriteTransaction';
 import { createReadonlyTransaction } from './createReadonlyTransaction';
 
-export type Key = string | number | Date | ArrayBufferView | ArrayBuffer | IDBArrayKey | IDBKeyRange;
+export type Key = string | number | Date | ArrayBufferView | ArrayBuffer  | IDBKeyRange; // IDBArrayKey
 export interface IndexDetails {
   indexName: string;
   order: string;
@@ -12,15 +12,15 @@ export interface IndexDetails {
 const indexedDB: IDBFactory =
   window.indexedDB || (<any>window).mozIndexedDB || (<any>window).webkitIndexedDB || (<any>window).msIndexedDB;
 
-export function openDatabase(dbName: string, version: number, upgradeCallback?: Function) {
+export function openDatabase(dbName: string, version: number, upgradeCallback?: (e: Event, db: IDBDatabase) => void) {
   return new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(dbName, version);
     let db: IDBDatabase;
-    request.onsuccess = (event: Event) => {
+    request.onsuccess = () => {
       db = request.result;
       resolve(db);
     };
-    request.onerror = (event: Event) => {
+    request.onerror = () => {
       reject(`IndexedDB error: ${request.error}`);
     };
     if (typeof upgradeCallback === 'function') {
@@ -168,7 +168,7 @@ export function DBOperations(dbName: string, version: number, currentStore: stri
   );
 
   const clear = useCallback(
-    () => new Promise<any>((resolve, reject) => {
+    () => new Promise<void>((resolve, reject) => {
       openDatabase(dbName, version).then(db => {
         validateBeforeTransaction(db, currentStore, reject);
         const { store, transaction } = createReadwriteTransaction(db, currentStore, resolve, reject);

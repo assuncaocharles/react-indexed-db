@@ -1,12 +1,11 @@
 import { DBMode } from './indexed-db';
 import { createDatabaseTransaction } from './createDatabaseTransaction';
 
-
 export function createReadonlyTransaction(
   database: IDBDatabase,
   store: string,
-  resolve: Function,
-  reject: Function
+  resolve: (payload?: any) => void,
+  reject: (e: Event) => void,
   ) {
   return createDatabaseTransaction(
     database,

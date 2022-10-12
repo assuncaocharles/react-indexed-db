@@ -1,4 +1,4 @@
-import { DBOperations, openDatabase, Key, CreateObjectStore } from './indexed-db';
+import { DBOperations, Key, CreateObjectStore } from './indexed-db';
 
 export interface IndexedDBProps {
   name: string;
@@ -24,7 +24,7 @@ export interface useIndexedDB {
   objectStore: string;
 }
 
-let indexeddbConfiguration: { version: number; name: string } = { version: null, name: null };
+const indexeddbConfiguration: { version: number; name: string } = { version: null, name: null };
 
 export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
   indexeddbConfiguration.name = name;

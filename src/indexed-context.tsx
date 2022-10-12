@@ -31,9 +31,9 @@ const IndexedDBCosumer = IndexedDBContext.Consumer;
 
 export function IndexedDB({ name, version, children, objectStoresMeta }: IndexedDBProps) {
   objectStoresMeta.forEach(async (schema: ObjectStoreMeta) => {
-    const db = await openDatabase(name, version, (event: any) => {
-      let db: IDBDatabase = event.currentTarget.result;
-      let objectStore = db.createObjectStore(schema.store, schema.storeConfig);
+    await openDatabase(name, version, (event: any) => {
+      const db: IDBDatabase = event.currentTarget.result;
+      const objectStore = db.createObjectStore(schema.store, schema.storeConfig);
       schema.storeSchema.forEach((schema: ObjectStoreSchema) => {
         objectStore.createIndex(schema.name, schema.keypath, schema.options);
       });
@@ -55,7 +55,7 @@ interface AccessDBProps {
     openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
     getByIndex: (indexName: string, key: any) => Promise<any>;
     clear: () => Promise<any>;
-  }) => {};
+  }) => ReactNode;
   objectStore: string;
 }
 

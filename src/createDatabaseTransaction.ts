@@ -8,8 +8,8 @@ export function createDatabaseTransaction(
   database: IDBDatabase,
   mode: DBMode,
   storeName: string,
-  resolve: Function,
-  reject: Function,
+  resolve: (e?: Event) => void,
+  reject: (e: Event) => void,
   createTransaction: typeof defaultCreateTransaction = defaultCreateTransaction,
   buildOptions: typeof defaultOptionsBuilder = defaultOptionsBuilder,
 ) {
