@@ -49,7 +49,7 @@
     "@typescript-eslint/parser": "^5.38.1",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-jest": "^27.1.2",
+    "eslint-plugin-jest": "^27.1.4",
     "eslint-plugin-react": "^7.31.10",
     "prettier": "^2.7.1",
     "source-map-loader": "^4.0.1",
