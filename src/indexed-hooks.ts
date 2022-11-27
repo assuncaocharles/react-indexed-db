@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import { DBOperations, Key, CreateObjectStore } from './indexed-db';
 
 export interface IndexedDBProps {
@@ -48,5 +49,5 @@ export function useIndexedDB(
   if (!indexeddbConfiguration.name || !indexeddbConfiguration.version) {
     throw new Error('Please, initialize the DB before the use.');
   }
-  return { ...DBOperations(indexeddbConfiguration.name, indexeddbConfiguration.version, objectStore) };
+  return useMemo(() => DBOperations(indexeddbConfiguration.name, indexeddbConfiguration.version, objectStore), [indexeddbConfiguration, objectStore])
 }
