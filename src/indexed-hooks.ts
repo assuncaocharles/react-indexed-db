@@ -1,5 +1,5 @@
-import {useMemo} from 'react';
-import { DBOperations, Key, CreateObjectStore } from './indexed-db';
+import { useMemo } from "react";
+import { DBOperations, Key, CreateObjectStore } from "./indexed-db";
 
 export interface IndexedDBProps {
   name: string;
@@ -25,7 +25,10 @@ export interface useIndexedDB {
   objectStore: string;
 }
 
-const indexeddbConfiguration: { version: number; name: string } = { version: null, name: null };
+const indexeddbConfiguration: { version: number; name: string } = {
+  version: null,
+  name: null,
+};
 
 export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
   indexeddbConfiguration.name = name;
@@ -34,20 +37,29 @@ export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
   CreateObjectStore(name, version, objectStoresMeta);
 }
 
-export function useIndexedDB(
-  objectStore: string
-): {
+export function useIndexedDB(objectStore: string): {
   add: <T = any>(value: T, key?: any) => Promise<number>;
   getByID: <T = any>(id: number | string) => Promise<T>;
   getAll: <T = any>() => Promise<T[]>;
   update: <T = any>(value: T, key?: any) => Promise<any>;
   deleteRecord: (key: Key) => Promise<any>;
-  openCursor: (cursorCallback: (event: Event) => void, keyRange?: IDBKeyRange) => Promise<void>;
+  openCursor: (
+    cursorCallback: (event: Event) => void,
+    keyRange?: IDBKeyRange,
+  ) => Promise<void>;
   getByIndex: (indexName: string, key: any) => Promise<any>;
   clear: () => Promise<any>;
 } {
   if (!indexeddbConfiguration.name || !indexeddbConfiguration.version) {
-    throw new Error('Please, initialize the DB before the use.');
+    throw new Error("Please, initialize the DB before the use.");
   }
-  return useMemo(() => DBOperations(indexeddbConfiguration.name, indexeddbConfiguration.version, objectStore), [indexeddbConfiguration, objectStore])
+  return useMemo(
+    () =>
+      DBOperations(
+        indexeddbConfiguration.name,
+        indexeddbConfiguration.version,
+        objectStore,
+      ),
+    [indexeddbConfiguration, objectStore],
+  );
 }

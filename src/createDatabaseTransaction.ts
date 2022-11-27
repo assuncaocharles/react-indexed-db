@@ -1,8 +1,8 @@
 import {
   createTransaction as defaultCreateTransaction,
   optionsGenerator as defaultOptionsBuilder,
-} from './Utils';
-import { DBMode } from './indexed-db';
+} from "./Utils";
+import { DBMode } from "./indexed-db";
 
 export function createDatabaseTransaction(
   database: IDBDatabase,
@@ -21,4 +21,4 @@ export function createDatabaseTransaction(
     store,
     transaction,
   };
-};
+}
