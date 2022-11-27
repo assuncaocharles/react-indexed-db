@@ -1,21 +1,20 @@
-# react-indexed-db
+# react-indexed-db-hook
 
-react-indexed-db is a service that wraps IndexedDB database in an "easier to use" service.
-It exposes very simple promises API to enable the usage of IndexedDB without most of it plumbing.
+react-indexed-db-hook is forked from [react-indexed-db](https://github.com/assuncaocharles/react-indexed-db). This library is a wrapper around the browser's IndexedDB database in an "easier to use" React Hook.
 
 ## Installation
 
 ```js
-npm install react-indexed-db
+npm install react-indexed-db-hook
 ```
 
 ## Creating the DB
 
-You can choose to work with the indexed db as an context or to use it as a hook.
+You can choose to work with the indexed db as an context or to use it as a hook. However, I don't plan on supporting the context, but it's there if you want it.
 
 ### To use it as a hook
 
-- Fist initialized your DB before to be able to use the hooks inside other components:
+- First initialized your DB before to be able to use the hooks inside other components:
 
 ```js
 //DBConfig.js|tsx
@@ -41,7 +40,7 @@ export const DBConfig = {
 
 import React from 'react';
 import { DBConfig } from './DBConfig';
-import { initDB } from 'react-indexed-db';
+import { initDB } from 'react-indexed-db-hook';
 
 initDB(DBConfig);
 
@@ -50,12 +49,12 @@ const App: React.FC = () => {
 };
 ```
 
-### To use it as an context:
+### To use it as a context:
 
 - First you have to declare inside `<IndexedDB></IndexedDB>` all the components you want to be able access the DB:
 
 ```js
-import { IndexedDB } from 'react-indexed-db';
+import { IndexedDB } from 'react-indexed-db-hook';
 import PanelExample from './Panel';
 
 function App() {
@@ -85,7 +84,7 @@ function App() {
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 export default function PanelExample() {
   return (
@@ -99,7 +98,7 @@ export default function PanelExample() {
 }
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 export default function PanelExample() {
   const db = useIndexedDB('people');
@@ -117,7 +116,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ getById }) => {
@@ -135,7 +134,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function ByID() {
   const { getByID } = useIndexedDB('people');
@@ -160,7 +159,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ getAll }) => {
@@ -184,7 +183,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function ShowAll() {
   const { getAll } = useIndexedDB('people');
@@ -216,7 +215,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ getByIndex }) => {
@@ -234,7 +233,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function ByIndex() {
   const { getByIndex } = useIndexedDB('people');
@@ -259,7 +258,7 @@ Usage example (add without a key since it's configured to be auto generated):
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ add }) => {
@@ -279,7 +278,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function AddMore() {
   const { add } = useIndexedDB('people');
@@ -310,7 +309,7 @@ Usage example (update without a key):
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ update }) => {
@@ -333,7 +332,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function Edit() {
   const { update } = useIndexedDB('people');
@@ -359,7 +358,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ deleteRecord }) => {
@@ -373,7 +372,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function Delete() {
   const { deleteRecord } = useIndexedDB('people');
@@ -398,7 +397,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB objectStore="people">
   {({ openCursor }) => {
@@ -418,7 +417,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function Open() {
   const { openCursor } = useIndexedDB('people');
@@ -448,7 +447,7 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db';
+import { AccessDB } from 'react-indexed-db-hook';
 
 <AccessDB>
   {({ clear }) => {
@@ -462,7 +461,7 @@ import { AccessDB } from 'react-indexed-db';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from 'react-indexed-db-hook';
 
 function ClearAll() {
   const { clear } = useIndexedDB('people');
