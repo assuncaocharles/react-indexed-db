@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "stripInternal": true,
     "strictNullChecks": false,
@@ -15,10 +15,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "lib": ["es2017", "dom"],
     "esModuleInterop": true
   },
-  "include": ["./src/**/*.ts", "src/indexed-context.tsx", "src/react-indexed-db.tsx", "src/index.tsx"],
+  "include": [
+    "./src/**/*.ts",
+    "src/indexed-context.tsx",
+    "src/react-indexed-db.tsx",
+    "src/index.tsx"
+  ],
   "exclude": ["./node_modules/"]
 }

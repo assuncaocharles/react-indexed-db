@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode, createContext } from "react";
 import { DBOperations, openDatabase, Key } from "./indexed-db";
 
 interface IndexedDBProps {
@@ -20,7 +20,7 @@ interface ObjectStoreSchema {
   options: { unique: boolean; [key: string]: any };
 }
 
-const IndexedDBContext = React.createContext<{
+const IndexedDBContext = createContext<{
   db: any;
   name: string;
   version: number;
