@@ -1,5 +1,5 @@
-import { DBMode } from "./indexed-db";
-import { createDatabaseTransaction } from "./createDatabaseTransaction";
+import { DBMode } from "./indexed-db.js";
+import { createDatabaseTransaction } from "./createDatabaseTransaction.js";
 
 export function createReadwriteTransaction(
   database: IDBDatabase,

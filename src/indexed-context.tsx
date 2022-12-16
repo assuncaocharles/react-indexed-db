@@ -1,5 +1,5 @@
 import { ReactNode, createContext } from "react";
-import { DBOperations, openDatabase, Key } from "./indexed-db";
+import { DBOperations, openDatabase, Key } from "./indexed-db.js";
 
 interface IndexedDBProps {
   name: string;

@@ -1,8 +1,9 @@
 {
   "name": "react-indexed-db-hook",
-  "version": "1.0.15",
+  "version": "2.0.0",
+  "type": "module",
   "description": "React wrapper to IndexedDB database.",
-  "main": "lib/main.js",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/*",
