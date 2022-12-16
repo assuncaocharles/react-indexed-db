@@ -20,27 +20,27 @@ You can choose to work with the indexed db as an context or to use it as a hook.
 //DBConfig.js|tsx
 
 export const DBConfig = {
-  name: 'MyDB',
+  name: "MyDB",
   version: 1,
   objectStoresMeta: [
     {
-      store: 'people',
-      storeConfig: { keyPath: 'id', autoIncrement: true },
+      store: "people",
+      storeConfig: { keyPath: "id", autoIncrement: true },
       storeSchema: [
-        { name: 'name', keypath: 'name', options: { unique: false } },
-        { name: 'email', keypath: 'email', options: { unique: false } }
-      ]
-    }
-  ]
+        { name: "name", keypath: "name", options: { unique: false } },
+        { name: "email", keypath: "email", options: { unique: false } },
+      ],
+    },
+  ],
 };
 ```
 
 ```js
 //App.js|tsx
 
-import React from 'react';
-import { DBConfig } from './DBConfig';
-import { initDB } from 'react-indexed-db-hook';
+import React from "react";
+import { DBConfig } from "./DBConfig";
+import { initDB } from "react-indexed-db-hook";
 
 initDB(DBConfig);
 
@@ -54,8 +54,8 @@ const App: React.FC = () => {
 - First you have to declare inside `<IndexedDB></IndexedDB>` all the components you want to be able access the DB:
 
 ```js
-import { IndexedDB } from 'react-indexed-db-hook';
-import PanelExample from './Panel';
+import { IndexedDB } from "react-indexed-db-hook";
+import PanelExample from "./Panel";
 
 function App() {
   return (
@@ -64,14 +64,15 @@ function App() {
       version={1}
       objectStoresMeta={[
         {
-          store: 'people',
-          storeConfig: { keyPath: 'id', autoIncrement: true },
+          store: "people",
+          storeConfig: { keyPath: "id", autoIncrement: true },
           storeSchema: [
-            { name: 'name', keypath: 'name', options: { unique: false } },
-            { name: 'email', keypath: 'email', options: { unique: false } }
-          ]
-        }
-      ]}>
+            { name: "name", keypath: "name", options: { unique: false } },
+            { name: "email", keypath: "email", options: { unique: false } },
+          ],
+        },
+      ]}
+    >
       <Panel />
     </IndexedDB>
   );
@@ -116,32 +117,32 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ getById }) => {
     const [person, setPerson] = useState(null);
-    getById('people', 1).then(
-      personFromDB => {
+    getById("people", 1).then(
+      (personFromDB) => {
         setPerson(personFromDB);
       },
-      error => {
+      (error) => {
         console.log(error);
-      }
+      },
     );
     return <div>{person}</div>;
   }}
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function ByID() {
-  const { getByID } = useIndexedDB('people');
+  const { getByID } = useIndexedDB("people");
   const [person, setPerson] = useState();
 
   useEffect(() => {
-    getById(1).then(personFromDB => {
+    getById(1).then((personFromDB) => {
       setPerson(personFromDB);
     });
   }, []);
@@ -159,22 +160,22 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ getAll }) => {
     const [persons, setPersons] = useState(null);
     getAll().then(
-      peopleFromDB => {
+      (peopleFromDB) => {
         setPersons(peopleFromDB);
       },
-      error => {
+      (error) => {
         console.log(error);
-      }
+      },
     );
     return (
       <div>
-        {personsFromDB.map(person => (
+        {personsFromDB.map((person) => (
           <span>{person}</span>
         ))}
       </div>
@@ -183,21 +184,21 @@ import { AccessDB } from 'react-indexed-db-hook';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function ShowAll() {
-  const { getAll } = useIndexedDB('people');
+  const { getAll } = useIndexedDB("people");
   const [persons, setPersons] = useState();
 
   useEffect(() => {
-    getAll().then(personsFromDB => {
+    getAll().then((personsFromDB) => {
       setPersons(personsFromDB);
     });
   }, []);
 
   return (
     <div>
-      {personsFromDB.map(person => (
+      {personsFromDB.map((person) => (
         <span>{person}</span>
       ))}
     </div>
@@ -215,32 +216,32 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ getByIndex }) => {
     const [person, setPerson] = useState(null);
-    getByIndex('name', 'Dave').then(
-      personFromDB => {
+    getByIndex("name", "Dave").then(
+      (personFromDB) => {
         setPerson(peopleFromDB);
       },
-      error => {
+      (error) => {
         console.log(error);
-      }
+      },
     );
     return <div>{person}</div>;
   }}
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function ByIndex() {
-  const { getByIndex } = useIndexedDB('people');
+  const { getByIndex } = useIndexedDB("people");
   const [person, setPerson] = useState();
 
   useEffect(() => {
-    getByIndex('name', 'Dave').then(personFromDB => {
+    getByIndex("name", "Dave").then((personFromDB) => {
       setPerson(peopleFromDB);
     });
   }, []);
@@ -258,18 +259,18 @@ Usage example (add without a key since it's configured to be auto generated):
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ add }) => {
     const handleClick = () => {
-      add({ name: 'name', email: 'email' }).then(
-        event => {
-          console.log('ID Generated: ', event.target.result);
+      add({ name: "name", email: "email" }).then(
+        (event) => {
+          console.log("ID Generated: ", event.target.result);
         },
-        error => {
+        (error) => {
           console.log(error);
-        }
+        },
       );
     };
 
@@ -278,20 +279,20 @@ import { AccessDB } from 'react-indexed-db-hook';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function AddMore() {
-  const { add } = useIndexedDB('people');
+  const { add } = useIndexedDB("people");
   const [person, setPerson] = useState();
 
   const handleClick = () => {
-    add({ name: 'name', email: 'email' }).then(
-      event => {
-        console.log('ID Generated: ', event.target.result);
+    add({ name: "name", email: "email" }).then(
+      (event) => {
+        console.log("ID Generated: ", event.target.result);
       },
-      error => {
+      (error) => {
         console.log(error);
-      }
+      },
     );
   };
 
@@ -309,22 +310,23 @@ Usage example (update without a key):
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ update }) => {
     return (
       <button
         onClick={() => {
-          update({ id: 3, name: 'NewName', email: 'NewEmail' }).then(
+          update({ id: 3, name: "NewName", email: "NewEmail" }).then(
             () => {
               // Do something after update
             },
-            error => {
+            (error) => {
               console.log(error);
-            }
+            },
           );
-        }}>
+        }}
+      >
         Update
       </button>
     );
@@ -332,15 +334,15 @@ import { AccessDB } from 'react-indexed-db-hook';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function Edit() {
-  const { update } = useIndexedDB('people');
+  const { update } = useIndexedDB("people");
   const [person, setPerson] = useState();
 
   const handleClick = () => {
-    update({ id: 3, name: 'NewName', email: 'NewNEmail' }).then(event => {
-      alert('Edited!');
+    update({ id: 3, name: "NewName", email: "NewNEmail" }).then((event) => {
+      alert("Edited!");
     });
   };
 
@@ -358,13 +360,13 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ deleteRecord }) => {
     const handleClick = () => {
-      deleteRecord(3).then(event => {
-        alert('Deleted!');
+      deleteRecord(3).then((event) => {
+        alert("Deleted!");
       });
     };
     return <button onClick={handleClick}>Delete</button>;
@@ -372,14 +374,14 @@ import { AccessDB } from 'react-indexed-db-hook';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function Delete() {
-  const { deleteRecord } = useIndexedDB('people');
+  const { deleteRecord } = useIndexedDB("people");
 
   const handleClick = () => {
-    deleteRecord(3).then(event => {
-      alert('Deleted!');
+    deleteRecord(3).then((event) => {
+      alert("Deleted!");
     });
   };
 
@@ -397,41 +399,41 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB objectStore="people">
   {({ openCursor }) => {
     const handleClick = () => {
-      openCursor(evt => {
+      openCursor((evt) => {
         var cursor = evt.target.result;
         if (cursor) {
           console.log(cursor.value);
           cursor.continue();
         } else {
-          console.log('Entries all displayed.');
+          console.log("Entries all displayed.");
         }
-      }, IDBKeyRange.bound('A', 'F'));
+      }, IDBKeyRange.bound("A", "F"));
     };
     return <button onClick={handleClick}>Run cursor</button>;
   }}
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function Open() {
-  const { openCursor } = useIndexedDB('people');
+  const { openCursor } = useIndexedDB("people");
 
   const handleClick = () => {
-    openCursor(evt => {
+    openCursor((evt) => {
       var cursor = evt.target.result;
       if (cursor) {
         console.log(cursor.value);
         cursor.continue();
       } else {
-        console.log('Entries all displayed.');
+        console.log("Entries all displayed.");
       }
-    }, IDBKeyRange.bound('A', 'F'));
+    }, IDBKeyRange.bound("A", "F"));
   };
 
   return <button onClick={handleClick}>Run cursor</button>;
@@ -447,13 +449,13 @@ Usage example:
 
 ```js
 // Context
-import { AccessDB } from 'react-indexed-db-hook';
+import { AccessDB } from "react-indexed-db-hook";
 
 <AccessDB>
   {({ clear }) => {
     const handleClick = () => {
       clear().then(() => {
-        alert('All Clear!');
+        alert("All Clear!");
       });
     };
     return <button onClick={handleClick}>Clear All</button>;
@@ -461,14 +463,14 @@ import { AccessDB } from 'react-indexed-db-hook';
 </AccessDB>;
 
 // Hooks
-import { useIndexedDB } from 'react-indexed-db-hook';
+import { useIndexedDB } from "react-indexed-db-hook";
 
 function ClearAll() {
-  const { clear } = useIndexedDB('people');
+  const { clear } = useIndexedDB("people");
 
   const handleClick = () => {
     clear().then(() => {
-      alert('All Clear!');
+      alert("All Clear!");
     });
   };
 
@@ -482,6 +484,8 @@ function ClearAll() {
 - [x] Implement Hooks `const {getAll, add ...} = useIndexedDB({name, version, dbSchema?})`
 - [ ] Handle `getAll()` perfomance issue regarding re-render
 - [ ] Implement examples/Demos
+- [x] Remove Webpack
+- [ ] Add automated tests
 
 ## License
 
