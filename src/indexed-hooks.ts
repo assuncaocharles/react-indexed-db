@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { DBOperations, Key, CreateObjectStore } from "./indexed-db.js";
+import { DBOperations, Key, CreateObjectStore } from "./indexed-db";
 
 export interface IndexedDBProps {
   name: string;

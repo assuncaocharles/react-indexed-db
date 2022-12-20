@@ -1,7 +1,8 @@
-import { validateBeforeTransaction } from "./Utils.js";
-import { ObjectStoreMeta, ObjectStoreSchema } from "./indexed-hooks.js";
-import { createReadwriteTransaction } from "./createReadwriteTransaction.js";
-import { createReadonlyTransaction } from "./createReadonlyTransaction.js";
+import { useCallback } from "react";
+import { validateBeforeTransaction } from "./Utils";
+import { ObjectStoreMeta, ObjectStoreSchema } from "./indexed-hooks";
+import { createReadwriteTransaction } from "./createReadwriteTransaction";
+import { createReadonlyTransaction } from "./createReadonlyTransaction";
 
 export type Key =
   | string
