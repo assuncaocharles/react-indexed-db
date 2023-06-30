@@ -1,16 +1,16 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  mode: 'production',
-  entry: './src/index.tsx',
-  devtool: 'source-map',
+  mode: "production",
+  entry: "./src/index.tsx",
+  devtool: "source-map",
   resolve: {
-    extensions: ['.ts', '.tsx']
+    extensions: [".ts", ".tsx"],
   },
   output: {
-    path: path.join(__dirname, '/lib'),
-    filename: '[name].js',
-    libraryTarget: 'commonjs2'
+    path: path.join(__dirname, "/lib"),
+    filename: "[name].js",
+    libraryTarget: "commonjs2",
   },
   module: {
     rules: [
@@ -19,18 +19,18 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
+            loader: "ts-loader",
+          },
+        ],
       },
       {
-        enforce: 'pre',
+        enforce: "pre",
         test: /\.js$/,
-        loader: 'source-map-loader'
-      }
-    ]
+        loader: "source-map-loader",
+      },
+    ],
   },
   externals: {
-    react: 'commonjs react' // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
-  }
+    react: "commonjs react", // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+  },
 };
