@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dethstrobe/react-indexed-db.git"
+    "url": "git+https://github.com/assuncaocharles/react-indexed-db.git"
   },
   "author": "Charles Assunção",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dethstrobe/react-indexed-db/issues"
+    "url": "https://github.com/assuncaocharles/react-indexed-db/issues"
   },
   "keywords": [
     "indexed",
@@ -37,7 +37,7 @@
     "database",
     "storage"
   ],
-  "homepage": "https://github.com/dethstrobe/react-indexed-db",
+  "homepage": "https://github.com/assuncaocharles/react-indexed-db",
   "peerDependencies": {
     "react": "^18.2.0"
   },
