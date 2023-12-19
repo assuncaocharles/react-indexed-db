@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { validateBeforeTransaction } from "./Utils";
 import { ObjectStoreMeta, ObjectStoreSchema } from "./indexed-hooks";
 import { createReadwriteTransaction } from "./createReadwriteTransaction";
