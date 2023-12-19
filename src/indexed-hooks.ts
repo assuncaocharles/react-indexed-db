@@ -30,11 +30,29 @@ const indexeddbConfiguration: { version: number; name: string } = {
   name: null,
 };
 
-export function initDB({ name, version, objectStoresMeta }: IndexedDBProps) {
+export function initDB({
+  name,
+  version,
+  objectStoresMeta,
+}: IndexedDBProps): Promise<void> {
   indexeddbConfiguration.name = name;
   indexeddbConfiguration.version = version;
   Object.freeze(indexeddbConfiguration);
-  CreateObjectStore(name, version, objectStoresMeta);
+
+  return new Promise((resolve, reject) => {
+    const request = CreateObjectStore(name, version, objectStoresMeta);
+
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = (event: any) => {
+      const { target } = event;
+      const { result } = target;
+
+      reject(result);
+    };
+  });
 }
 
 export function useIndexedDB(objectStore: string): {

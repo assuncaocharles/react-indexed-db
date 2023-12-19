@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { validateBeforeTransaction } from "./Utils";
 import { ObjectStoreMeta, ObjectStoreSchema } from "./indexed-hooks";
 import { createReadwriteTransaction } from "./createReadwriteTransaction";
@@ -48,7 +47,7 @@ export function CreateObjectStore(
   dbName: string,
   version: number,
   storeSchemas: ObjectStoreMeta[],
-) {
+): IDBOpenDBRequest {
   const request: IDBOpenDBRequest = indexedDB.open(dbName, version);
 
   request.onupgradeneeded = function (event: IDBVersionChangeEvent) {
@@ -66,9 +65,12 @@ export function CreateObjectStore(
     });
     database.close();
   };
+
   request.onsuccess = function (e: any) {
     e.target.result.close();
   };
+
+  return request;
 }
 
 export function DBOperations(
