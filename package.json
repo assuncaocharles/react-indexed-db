@@ -50,12 +50,17 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.5",
     "eslint-plugin-react": "^7.31.10",
+    "karma": "^6.4.2",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^4.0.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-webpack": "^5.0.0",
     "prettier": "^2.7.1",
     "source-map-loader": "^4.0.1",
     "ts-loader": "^9.4.1",
     "typedoc": "^0.24.8",
     "typescript": "^5.0.2",
-    "webpack": "^5.75.0",
+    "webpack": "^5.88.2",
     "webpack-cli": "^5.0.1"
   }
 }
