@@ -15,6 +15,7 @@ export interface IndexDetails {
   indexName: string;
   order: string;
 }
+type IDBCursorDirection = "next" | "nextunique" | "prev" | "prevunique";
 const indexedDB: IDBFactory =
   window.indexedDB ||
   (<any>window).mozIndexedDB ||
@@ -118,6 +119,7 @@ export function DBOperations(
   const openCursor = (
     cursorCallback: (event: Event) => void,
     keyRange?: IDBKeyRange,
+    direction?: IDBCursorDirection,
   ) => {
     return new Promise<void>((resolve, reject) => {
       openDatabase(dbName, version).then((db) => {
