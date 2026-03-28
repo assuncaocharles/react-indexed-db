@@ -2,6 +2,10 @@
 
 react-indexed-db-hook is forked from [react-indexed-db](https://github.com/assuncaocharles/react-indexed-db). This library is a wrapper around the browser's IndexedDB database in an "easier to use" React Hook.
 
+## Overview Project
+
+react-indexed-db-hook provides a simple and intuitive React Hook interface for working with IndexedDB, the browser's built-in NoSQL database. It supports both hook-based and context-based usage patterns, making it easy to integrate persistent client-side storage into your React applications.
+
 ## Installation
 
 ```js
